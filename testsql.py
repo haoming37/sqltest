@@ -16,12 +16,12 @@ s_create_table="CREATE TABLE DIRECTORIES ( \
                UNIQUE(path) \
                )"
 
-def create_backup(path,date) :
+def create_backup(path,date,prefix="") :
 #    s_filepath_split=path.split('/')
 #    print(s_filepath_split[len(s_filepath_split) - 2])
     filename=ntpath.basename(path)
     dirdate=date.strftime('%Y-%m-%d-%Hh%Mm%Ss')
-    backupdir= "backup/" + filename + "/" + dirdate
+    backupdir= "backup/" + prefix + filename + "/" + dirdate
     os.makedirs(backupdir)
     shutil.copy2(file, backupdir + "/" + filename)
     
