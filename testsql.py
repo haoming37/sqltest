@@ -12,8 +12,20 @@ dsn="postgresql://dev:password@localhost:5432/dev"
 s_create_table="CREATE TABLE DIRECTORIES ( \
                id serial PRIMARY KEY,  \
                path text NOT NULL, \
-               date timestamp NOT NULL \
+               date timestamp NOT NULL, \
+               UNIQUE(path) \
                )"
+
+def create_backup(path,date) :
+#    s_filepath_split=path.split('/')
+#    print(s_filepath_split[len(s_filepath_split) - 2])
+    filename=ntpath.basename(path)
+    dirdate=date.strftime('%Y-%m-%d-%Hh%Mm%Ss')
+    backupdir= "backup/" + filename + "/" + dirdate
+    os.makedirs(backupdir)
+    shutil.copy2(file, backupdir + "/" + filename)
+    
+
 
 with psycopg2.connect(dsn) as conn:
     with conn.cursor() as cur :
@@ -44,12 +56,7 @@ with psycopg2.connect(dsn) as conn:
                             s_update_data = "UPDATE directories SET date =" + '\'' + s_dt + '\'' + "WHERE path =" + '\'' + path+ '\''
                             cur.execute(s_update_data)
                             #mkdir
-                            filename=ntpath.basename(file)
-                            dirdate=cont[0][2].strftime('%Y-%m-%d-%Hh%Mm%Ss')
-                            backupdir= "backup/" + filename + "/" + dirdate)
-                            os.makedirs(backupdir)
-                            shutil.copy2(file, backupdir + "/" + filename)
-                            print(backupdir)
+                            create_backup(file, dt)
                             #ToDo if android
                             #ToDo if ios
                     else:
@@ -60,6 +67,7 @@ with psycopg2.connect(dsn) as conn:
                         print(s_insert_data)
                         cur.execute(s_insert_data)
                         #mkdir
+                        create_backup(file, dt)
                         #ToDo if android
                         #ToDo if ios
                 else:
